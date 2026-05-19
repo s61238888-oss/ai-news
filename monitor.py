@@ -2,7 +2,7 @@ import os
 import json
 import requests
 import feedparser
-import anthropic
+from openai import OpenAI  # 改这里，用OpenAI SDK而不是Anthropic
 
 SOURCES = [
     "https://www.anthropic.com/news/rss.xml",
@@ -10,7 +10,12 @@ SOURCES = [
     "https://www.jiqizhixin.com/rss",
 ]
 FEISHU_WEBHOOK = "https://open.feishu.cn/open-apis/bot/v2/hook/41e0063e-e3dd-4474-8f84-fe2f6a7ba709"
-client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+
+# 改这里：用OpenAI兼容的客户端
+client = OpenAI(
+    api_key=os.environ["LINGSHI_API_KEY"],
+    base_url="https://api.lingshi.chat/v1"  # 灵识的API地址
+)
 
 def fetch_news():
     items = []
@@ -40,12 +45,13 @@ def summarize(items):
 资讯列表：
 {json.dumps(items, ensure_ascii=False, indent=2)}
 """
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
+    # 改这里：用OpenAI的chat.completions接口
+    response = client.chat.completions.create(
+        model="gpt-4",  # 改成灵识支持的模型名（问他们支持哪些）
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
-    return response.content[0].text
+    return response.choices[0].message.content
 
 def send_to_feishu(text):
     requests.post(FEISHU_WEBHOOK, json={
