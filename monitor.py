@@ -13,7 +13,7 @@ FEISHU_WEBHOOK = "https://open.feishu.cn/open-apis/bot/v2/hook/41e0063e-e3dd-447
 
 # 改这里：用OpenAI兼容的客户端
 client = OpenAI(
-    api_key=os.environ["LINGSHI_API_KEY"],
+    api_key=os.environ["OPENAI_API_KEY"],
     base_url="https://api.lingshi.chat/v1"  # 灵识的API地址
 )
 
