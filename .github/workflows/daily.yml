@@ -1,19 +1,28 @@
 name: Daily AI News
+
 on:
   schedule:
-    - cron: "0 1 * * *"   # UTC 1点 = 北京9点
-    - cron: "0 9 * * *"   # UTC 9点 = 北京下午5点
-  workflow_dispatch:       # 允许手动触发
+    - cron: "0 1 * * *" # Beijing 09:00
+    - cron: "0 9 * * *" # Beijing 17:00
+  workflow_dispatch:
 
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - run: pip install openai feedparser requests
+
+      - run: python -m py_compile monitor.py
+
       - run: python monitor.py
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_BASE_URL: ${{ secrets.AI_BASE_URL }}
+          AI_MODEL: ${{ secrets.AI_MODEL }}
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
