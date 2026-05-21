@@ -89,6 +89,8 @@ News list:
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}],
     )
+    if isinstance(response, str):
+        return response
     return response.choices[0].message.content or build_fallback_summary(items)
 
 
