@@ -16,7 +16,7 @@ SOURCES = [
     "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
 ]
 
-AI_API_KEY = os.getenv("AI_API_KEY")
+AI_API_KEY = os.getenv("AI_API_KEY") or os.getenv("OPENAI_API_KEY")
 AI_BASE_URL = os.getenv("AI_BASE_URL") or "https://api.lingshi.chat/v1"
 AI_MODEL = os.getenv("AI_MODEL") or "gpt-4"
 FEISHU_WEBHOOK = os.getenv("FEISHU_WEBHOOK")
