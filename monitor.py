@@ -18,7 +18,7 @@ SOURCES = [
 
 AI_API_KEY = os.getenv("AI_API_KEY") or os.getenv("OPENAI_API_KEY")
 AI_BASE_URL = os.getenv("AI_BASE_URL") or "https://api.lingshi.chat/v1"
-AI_MODEL = os.getenv("AI_MODEL") or "gpt-4"
+AI_MODEL = os.getenv("AI_MODEL") or "gpt-5.5"
 FEISHU_WEBHOOK = os.getenv("FEISHU_WEBHOOK")
 
 
@@ -84,6 +84,27 @@ News list:
 {json.dumps(items, ensure_ascii=False, indent=2)}
 """
 
+    response = client.responses.create(
+        model=AI_MODEL,
+        input=prompt,
+        max_output_tokens=2000,
+    )
+    if isinstance(response, str):
+        return response
+    if getattr(response, "output_text", None):
+        return response.output_text
+
+    output = getattr(response, "output", None) or []
+    text_parts: list[str] = []
+    for item in output:
+        for content in getattr(item, "content", []) or []:
+            text = getattr(content, "text", None)
+            if text:
+                text_parts.append(text)
+    if text_parts:
+        return "\n".join(text_parts)
+
+    print("Responses API returned no text, trying Chat Completions instead.")
     response = client.chat.completions.create(
         model=AI_MODEL,
         max_tokens=2000,
